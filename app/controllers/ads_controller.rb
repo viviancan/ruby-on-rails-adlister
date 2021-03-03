@@ -1,6 +1,7 @@
 class AdsController < ApplicationController
   before_action :set_ad, only: %i[ show edit update destroy ]
-
+  before_action :authenticate_user!, except: [:index, :show]
+  before_action :correct_user, only: [:edit, :update, :destroy]
   # GET /ads or /ads.json
   def index
     @ads = Ad.all
@@ -12,7 +13,8 @@ class AdsController < ApplicationController
 
   # GET /ads/new
   def new
-    @ad = Ad.new
+    # @ad = Ad.new
+    @ad = current_user.ads.build
   end
 
   # GET /ads/1/edit
@@ -21,7 +23,8 @@ class AdsController < ApplicationController
 
   # POST /ads or /ads.json
   def create
-    @ad = Ad.new(ad_params)
+    # @ad = Ad.new(ad_params)
+    @ad = current_user.ads.build(ad_params )
 
     respond_to do |format|
       if @ad.save
@@ -56,6 +59,10 @@ class AdsController < ApplicationController
     end
   end
 
+  def correct_user
+    @ad = current_user.ads.find_by(id: params[:id])
+    redirect_to ads_path, notice: "Not authorized to edit" if @ad.nil?
+  end
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_ad

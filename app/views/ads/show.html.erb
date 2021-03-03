@@ -12,6 +12,7 @@
 </p>
 
 
-
-<%= link_to 'Edit', edit_ad_path(@ad) %> |
-<%= link_to 'Back', ads_path %>
+<% if @ad.user == current_user %>
+  <%= link_to 'Edit', edit_ad_path(@ad) %> |
+  <%= link_to 'Back', ads_path %>
+<% end %>
